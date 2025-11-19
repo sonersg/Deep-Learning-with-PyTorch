@@ -137,3 +137,19 @@ with torch.no_grad():
             correct += 1
 
 print(f'We have {correct} correct!')
+
+new_iris = torch.tensor([4.7, 3.2, 1.3, 0.2])
+with torch.no_grad():
+    print(model(new_iris))
+
+new_iris2 = torch.tensor([5.9, 3.0, 5.1, 1.8])
+with torch.no_grad():
+    print(model(new_iris2))
+
+# Save our NN Model
+torch.save(model.state_dict(), 'my_iris.pt')
+# Load the saved Model
+saved_model = Model()
+saved_model.load_state_dict(torch.load('my_iris.pt'))
+# Make sure it loaded correctly
+saved_model.eval()
