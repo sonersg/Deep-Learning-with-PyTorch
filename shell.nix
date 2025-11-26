@@ -9,7 +9,8 @@ pkgs.mkShell {
     python313Packages.matplotlib
     python313Packages.pandas
     python313Packages.scikit-learn
-    #python313Packages.numpy
+    python313Packages.nltk
+    python313Packages.numpy
     #cudaPackages.cudatoolkit
   ];
 }
