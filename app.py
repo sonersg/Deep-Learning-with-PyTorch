@@ -19,7 +19,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-# Create a Model class thta inherits nn.Module 
+
+# Create a Model class thta inherits nn.Module
 class Model(nn.Module):
     def __init__(self, in_features=4, h1=8, h2=9, out_features=3):
         super().__init__()
@@ -33,39 +34,47 @@ class Model(nn.Module):
         x = self.out(x)
         return x
 
-# Pick a manual seed for randomization 
+
+# Pick a manual seed for randomization
 torch.manual_seed(4)
 
 model = Model()
 
 import pandas as pd
-pd.set_option('future.no_silent_downcasting', True)
-import matplotlib.pyplot as plt
-# %matplotlib inline 
 
-url = 'https://gist.githubusercontent.com/netj/8836201/raw/6f9306ad21398ea43cba4f7d537619d0e07d5ae3/iris.csv'
+pd.set_option("future.no_silent_downcasting", True)
+import matplotlib.pyplot as plt
+
+# %matplotlib inline
+
+url = "https://gist.githubusercontent.com/netj/8836201/raw/6f9306ad21398ea43cba4f7d537619d0e07d5ae3/iris.csv"
 my_df = pd.read_csv(url)
 
 # print(my_df)
 
-# Change last column from strings to integers 
+# Change last column from strings to integers
 # In your preprocessing (around line 53)
-my_df['variety'] = my_df['variety'].replace({'Setosa': 0, 'Versicolor': 1, 'Virginica': 2})
+my_df["variety"] = my_df["variety"].replace(
+    {"Setosa": 0, "Versicolor": 1, "Virginica": 2}
+)
 
 # print(my_df)
 
 # Train, Test, Split! Set x, y
-X = my_df.drop('variety', axis=1)
-y = my_df['variety']
+X = my_df.drop("variety", axis=1)
+y = my_df["variety"]
 
-# Convert these to numpy arrays 
+# Convert these to numpy arrays
 X = X.values
 y = y.values
 # print(X)
 
 # Train, Test, Split
 from sklearn.model_selection import train_test_split
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=41)
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=41
+)
 
 # Convert X features to float tensors
 X_train = torch.FloatTensor(X_train)
@@ -82,23 +91,23 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
 # print(model.parameters)
 
-# Train our model 
+# Train our model
 # Epochs?: One run through all the training data in our network
 epochs = 222
 losses = []
 for i in range(epochs):
-    # Go forward and get a prediction 
-    y_pred = model.forward(X_train) # Get predicted result
+    # Go forward and get a prediction
+    y_pred = model.forward(X_train)  # Get predicted result
 
     # Measure the loss, error (gonna be high at first)
-    loss = criterion(y_pred, y_train) # Predixted values vs y_train
+    loss = criterion(y_pred, y_train)  # Predixted values vs y_train
 
-    # Kepp track of our losses 
+    # Kepp track of our losses
     losses.append(loss.detach().numpy())
 
-    # Print every 10 epoch 
+    # Print every 10 epoch
     if i % 10 == 0:
-        print(f'Epoch: {i} and loss: {loss}')
+        print(f"Epoch: {i} and loss: {loss}")
 
     # Do some back propogation: take the error rate of forward propogation
     # and feed it back through the network to fine tune the weights
@@ -106,16 +115,16 @@ for i in range(epochs):
     loss.backward()
     optimizer.step()
 
-# Graph it out 
+# Graph it out
 # plt.plot(range(epochs), losses)
 # plt.ylabel("loss/error")
 # plt.xlabel("Epoch")
 # plt.show()
 
-# Evaluate model on test data set 
-with torch.no_grad(): # Basically turn off back propogation
+# Evaluate model on test data set
+with torch.no_grad():  # Basically turn off back propogation
     y_eval = model.forward(X_test)
-    loss = criterion(y_eval, y_test) # Find loss, error
+    loss = criterion(y_eval, y_test)  # Find loss, error
 
 # print(loss)
 
@@ -131,12 +140,12 @@ with torch.no_grad():
             x = "Virginica"
         # Will tell us what type of flower our network thinks it is
         # print(f'{i+1}, {str(y_val)} \t {y_test[i]} \t {y_val.argmax().item()}')
-        print(f'{i+1}, {str(y_val)} \t {x}')
+        print(f"{i+1}, {str(y_val)} \t {x}")
         # Correct or not
         if y_val.argmax().item() == y_test[i]:
             correct += 1
 
-print(f'We have {correct} correct!')
+print(f"We have {correct} correct!")
 
 new_iris = torch.tensor([4.7, 3.2, 1.3, 0.2])
 with torch.no_grad():
@@ -147,9 +156,9 @@ with torch.no_grad():
     print(model(new_iris2))
 
 # Save our NN Model
-torch.save(model.state_dict(), 'my_iris.pt')
+torch.save(model.state_dict(), "my_iris.pt")
 # Load the saved Model
 saved_model = Model()
-saved_model.load_state_dict(torch.load('my_iris.pt'))
+saved_model.load_state_dict(torch.load("my_iris.pt"))
 # Make sure it loaded correctly
 saved_model.eval()
